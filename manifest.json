@@ -1,0 +1,9 @@
+{
+  "name": "Football Performance",
+  "short_name": "Football Performance",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f4f4f1",
+  "theme_color": "#0b0b0b",
+  "description": "AI coach per la preparazione calcistica"
+}
