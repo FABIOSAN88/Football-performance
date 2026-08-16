@@ -13,7 +13,7 @@ button{border:0;background:#111;color:#fff;border-radius:13px;padding:12px 15px;
 .tabs{display:flex;gap:7px;overflow:auto;margin-bottom:12px}.tab{white-space:nowrap;background:#fff;color:#111;border:1px solid var(--line);padding:9px 12px;border-radius:99px}.tab.sel{background:#111;color:#fff}.workout{display:flex;gap:12px;align-items:center;margin:9px 0}.icon{width:49px;height:49px;border-radius:15px;background:#ecece7;display:grid;place-items:center;font-weight:950}.meta{flex:1}.meta b{display:block}.meta span{font-size:12px;color:var(--muted)}
 .score{width:148px;height:148px;border-radius:50%;margin:7px auto 15px;display:grid;place-items:center;position:relative;background:conic-gradient(#111 var(--p),#e5e5df 0)}.score:after{content:"";position:absolute;width:116px;height:116px;border-radius:50%;background:#fff}.score strong{position:relative;z-index:1;font-size:37px}
 .choice{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 16px}.choice button{background:#fff;color:#111;border:1px solid var(--line);text-align:left}.choice button.sel{background:#111;color:#fff}.input,.select{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:15px;margin:7px 0 12px}
-.exercise{background:#fff;border:1px solid var(--line);border-radius:19px;padding:16px;margin:9px 0}.exercise h3{margin:0 0 5px}.sets{font-weight:900}.cue{font-size:12px;color:var(--muted);margin-top:6px}.timer{text-align:center}.phase{font-size:10px;letter-spacing:.15em;font-weight:950;color:var(--muted)}.time{font-size:74px;font-weight:950;letter-spacing:-.08em}
+.exercise{background:#fff;border:1px solid var(--line);border-radius:19px;padding:16px;margin:9px 0}.exercise h3{margin:0 0 5px}.exercise a{display:inline-block}.sets{font-weight:900}.cue{font-size:12px;color:var(--muted);margin-top:6px}.timer{text-align:center}.phase{font-size:10px;letter-spacing:.15em;font-weight:950;color:var(--muted)}.time{font-size:74px;font-weight:950;letter-spacing:-.08em}
 .nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);z-index:8}.navin{max-width:600px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr)}.nav button{background:none;color:#777;border-radius:0;padding:11px 2px;font-size:10px}.nav button.active{color:#111}
 .test{margin:10px 0}.test .row{margin-bottom:8px}.test input{width:90px;margin:0}.result{font-weight:900}.ai{border:1px solid var(--line);background:#fff;border-radius:19px;padding:15px}.tag{display:inline-block;font-size:10px;font-weight:900;padding:6px 8px;border-radius:99px;background:#eee;margin:2px}
 .toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:11px 15px;border-radius:99px;font-size:12px;display:none;z-index:20}
@@ -35,8 +35,20 @@ button{border:0;background:#111;color:#fff;border-radius:13px;padding:12px 15px;
 
 <section id="checkin" class="view"><div class="section"><h2>Check-in atleta</h2><p class="small">Il punteggio è un indicatore di carico, non una diagnosi.</p><div class="card">
 <b>Energia</b><div class="choice" id="energy"></div><b>Indolenzimento</b><div class="choice" id="soreness"></div><b>Stress</b><div class="choice" id="stress"></div><b>Sonno</b><div class="choice" id="sleep"></div>
+<label class="small">Carico nelle ultime 48 ore</label>
+<select class="select" id="recentLoad">
+<option value="0">Quasi nulla</option>
+<option value="1">Leggero · mobilità / passeggiata</option>
+<option value="2">Moderato · allenamento normale</option>
+<option value="3">Alto · partita / calcio intenso</option>
+<option value="4">Molto alto · calcio + altro sport</option>
+</select>
+<label class="small">Durata attività intensa</label>
+<select class="select" id="recentMinutes">
+<option value="0">0–20 min</option><option value="1">20–45 min</option><option value="2">45–75 min</option><option value="3">75–120 min</option><option value="4">120+ min</option>
+</select>
 <label class="small">Giorni alla partita</label><select class="select" id="days"><option value="0">0 · oggi</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5+</option></select>
-<button style="width:100%" onclick="makePlan()">GENERA IL MIO ALLENAMENTO</button></div><div id="checkResult" style="margin-top:12px"></div></div></section>
+<button style="width:100%" onclick="makePlan()">GENERA IL MIO ALLENAMENTO</button></div><div id="checkResult" style="margin-top:12px"></div><div class="card" style="margin-top:10px"><b>Perché questa modifica?</b><p class="small">Il coach considera anche il carico esterno recente: calcio, beach volley, corsa, palestra e altre attività. Due giorni molto intensi possono ridurre il carico consigliato anche se ti senti relativamente bene.</p></div></div></section>
 
 <section id="tests" class="view"><div class="section"><h2>Test performance</h2><p class="small">Inserisci i tuoi risultati per creare una baseline. Il motore confronta i valori nel tempo.</p>
 <div class="card">
@@ -51,7 +63,7 @@ button{border:0;background:#111;color:#fff;border-radius:13px;padding:12px 15px;
 <section id="progress" class="view"><div class="section"><h2>Progressi</h2><div class="grid"><div class="card"><div class="small">SESSIONI</div><div class="metric" id="sessions">0</div></div><div class="card"><div class="small">MINUTI</div><div class="metric" id="minutes">0</div></div></div>
 <div class="card" style="margin-top:12px"><b>Profilo atleta</b><label class="small">Età</label><input id="age" class="input" type="number"><label class="small">Peso kg</label><input id="weight" class="input" type="number"><label class="small">Ruolo</label><select id="position" class="select"><option>Esterno / Ala</option><option>Centrocampista</option><option>Difensore</option><option>Attaccante</option><option>Portiere</option></select><label class="small">Giorno partita</label><select id="matchday" class="select"><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option><option>Sabato</option><option>Domenica</option></select><button onclick="saveProfile()">SALVA PROFILO</button></div></div></section>
 
-<section id="player" class="view"><div class="section"><div class="small">AI COACH · SESSIONE</div><h2 id="wTitle"></h2><p id="wDesc"></p></div><div class="timer"><div class="phase" id="phase">READY</div><div class="time" id="timer">00:30</div><button onclick="toggleTimer()" id="timerBtn">AVVIA</button></div><div id="exerciseList"></div><button class="light" style="width:100%" onclick="show('home')">ESCI</button></section>
+<section id="player" class="view"><div class="section"><div class="small">AI COACH · SESSIONE</div><h2 id="wTitle"></h2><p id="wDesc"></p><div class="small">Ogni esercizio avrà un collegamento video per vedere la tecnica prima di iniziare.</div></div><div class="timer"><div class="phase" id="phase">READY</div><div class="time" id="timer">00:30</div><button onclick="toggleTimer()" id="timerBtn">AVVIA</button></div><div id="exerciseList"></div><button class="light" style="width:100%" onclick="show('home')">ESCI</button></section>
 </main>
 <div class="nav"><div class="navin"><button class="active" onclick="show('home',this)">HOME</button><button onclick="show('plan',this)">PIANO</button><button onclick="show('library',this)">WORKOUT</button><button onclick="show('tests',this)">TEST</button><button onclick="show('progress',this)">PROGRESSI</button></div></div>
 </div><div class="toast" id="toast"></div>
@@ -70,13 +82,34 @@ function show(id,btn){document.querySelectorAll(".view").forEach(x=>x.classList.
 function choices(id,a){document.getElementById(id).innerHTML=a.map((x,i)=>`<button class="${i==1?"sel":""}" onclick="pick(this)">${x}</button>`).join("")}
 function pick(x){x.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("sel"));x.classList.add("sel")}
 function val(id){return document.querySelector("#"+id+" .sel")?.textContent||""}
-function makePlan(){let e=val("energy"),s=val("soreness"),st=val("stress"),sl=val("sleep"),d=+days.value,score=78;if(e=="Bassa")score-=18;if(e=="Alta"||e=="Ottima")score+=7;if(s=="Alta")score-=15;if(s=="Dolore")score-=35;if(st=="Alto")score-=10;if(sl=="Pessimo")score-=12;if(sl=="Ottimo")score+=5;if(d<=1)score=Math.min(score,72);score=Math.max(20,Math.min(95,score));S.score=score;S.rec=score<55?3:(d<=1?6:(score<72?4:(d>=4?0:1)));let label=score>=80?"HIGH PERFORMANCE":score>=65?"MODERATE LOAD":"RECOVERY";homeScore.textContent=score;homeBar.style.width=score+"%";homeAdvice.textContent=score>=80?"Seduta di qualità.":score>=65?"Volume controllato.":"Riduci il carico e recupera.";heroTitle.textContent=W[S.rec].n;heroText.textContent=`${W[S.rec].t} min · ${label} · ${d} giorni dalla partita`;recCard.innerHTML=`<div class="card workout" onclick="openWorkout(${S.rec})"><div class="icon">${W[S.rec].c.slice(0,2).toUpperCase()}</div><div class="meta"><b>${W[S.rec].n}</b><span>${W[S.rec].t} min · ${label}</span></div><button>▶</button></div>`;checkResult.innerHTML=`<div class="card"><div class="score" style="--p:${score}%"><strong>${score}</strong></div><h2 style="text-align:center">${label}</h2><p class="small" style="text-align:center">${score>=75?"Puoi spingere sulla qualità, senza aumentare inutilmente il volume.":"Meglio proteggere il recupero: qualità tecnica e basso carico."}</p><button style="width:100%" onclick="openRec()">INIZIA</button></div>`;renderPlan();toast("Piano adattato")}
+function makePlan(){let e=val("energy"),s=val("soreness"),st=val("stress"),sl=val("sleep"),d=+days.value,load=+recentLoad.value,mins=+recentMinutes.value,score=78;
+if(e=="Bassa")score-=18;if(e=="Alta"||e=="Ottima")score+=7;
+if(s=="Alta")score-=15;if(s=="Dolore")score-=35;if(st=="Alto")score-=10;
+if(sl=="Pessimo")score-=12;if(sl=="Ottimo")score+=5;
+score-=load*6;score-=mins*3;
+if(load>=3 && mins>=2)score-=8;
+if(d<=1)score=Math.min(score,72);
+score=Math.max(20,Math.min(95,score));
+S.score=score;
+S.rec=score<55?3:(d<=1?6:(score<72?4:(d>=4?0:1)));
+let label=score>=80?"HIGH PERFORMANCE":score>=65?"MODERATE LOAD":"RECOVERY";
+homeScore.textContent=score;homeBar.style.width=score+"%";
+homeAdvice.textContent=score>=80?"Seduta di qualità.":score>=65?"Volume controllato: il carico recente è incluso.":"Riduci il carico e recupera.";
+heroTitle.textContent=W[S.rec].n;
+heroText.textContent=`${W[S.rec].t} min · ${label} · ${d} giorni dalla partita · carico 48h: ${["minimo","leggero","moderato","alto","molto alto"][load]}`;
+recCard.innerHTML=`<div class="card workout" onclick="openWorkout(${S.rec})"><div class="icon">${W[S.rec].c.slice(0,2).toUpperCase()}</div><div class="meta"><b>${W[S.rec].n}</b><span>${W[S.rec].t} min · ${label}</span></div><button>▶</button></div>`;
+checkResult.innerHTML=`<div class="card"><div class="score" style="--p:${score}%"><strong>${score}</strong></div><h2 style="text-align:center">${label}</h2><p class="small" style="text-align:center">${load>=3?"Ho ridotto il carico perché hai accumulato attività intensa nelle ultime 48 ore.":score>=75?"Puoi spingere sulla qualità, senza aumentare inutilmente il volume.":"Meglio proteggere il recupero: qualità tecnica e basso carico."}</p><button style="width:100%" onclick="openRec()">INIZIA</button></div>`;
+renderPlan();toast("Piano adattato al carico recente")}
 function renderPlan(){planAI.innerHTML=`<div class="ai"><b>AI COACH</b><span class="tag">READINESS ${S.score??"—"}</span><span class="tag">PARTITA ADATTIVA</span><p class="small">${S.score==null?"Fai il check-in.":S.score<55?"Scarico prioritario.":S.score<75?"Carico moderato.":"Qualità alta con volume controllato."}</p></div>`;planList.innerHTML=["LUN · MATCH","MAR · RECOVERY","MER · MOBILITY + TECHNIQUE","GIO · SPEED","VEN · STRENGTH","SAB · CONDITIONING","DOM · REST"].map(x=>`<div class="card" style="margin:9px 0"><b>${x}</b><div class="small">Il volume viene modificato in base alla readiness.</div></div>`).join("")}
 function renderWeek(){week.innerHTML=[["LUN","MATCH","match"],["MAR","RECOVERY","recovery"],["MER","MOBILITY","recovery"],["GIO","SPEED","normal"],["VEN","STRENGTH","normal"],["SAB","CONDITIONING","normal"],["DOM","REST","recovery"]].map(x=>`<div class="day row"><div><b>${x[0]}</b>${x[1]}</div><span class="badge ${x[2]}">${x[2]=="match"?"MATCH":x[2]=="recovery"?"RECOVERY":"WORKOUT"}</span></div>`).join("")}
 function renderLib(f="all"){library.innerHTML=W.filter(w=>f=="all"||w.c==f).map(w=>`<div class="card workout" onclick="openWorkout(${w.id})"><div class="icon">${w.c.slice(0,2).toUpperCase()}</div><div class="meta"><b>${w.n}</b><span>${w.t} min · ${w.c}</span></div><button>▶</button></div>`).join("")}
 function filterLib(f,b){document.querySelectorAll(".tab").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");renderLib(f)}
 function openRec(){openWorkout(S.rec)}
-function openWorkout(id){let w=W.find(x=>x.id==id);S.current=w;wTitle.textContent=w.n;wDesc.textContent=w.d;exerciseList.innerHTML=w.e.map(e=>`<div class="exercise"><h3>${e[0]}</h3><div class="sets">${e[1]}</div><div class="cue">${e[2]}</div></div>`).join("");show("player");resetTimer(30)}
+function openWorkout(id){let w=W.find(x=>x.id==id);S.current=w;wTitle.textContent=w.n;wDesc.textContent=w.d;exerciseList.innerHTML=w.e.map(e=>{
+let q=encodeURIComponent(e[0]+" football exercise technique");
+let link="https://www.youtube.com/results?search_query="+q;
+return `<div class="exercise"><h3>${e[0]}</h3><div class="sets">${e[1]}</div><div class="cue">${e[2]}</div><a href="${link}" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px;text-decoration:none"><button class="light">▶ VIDEO ESECUZIONE</button></a></div>`
+}).join("");show("player");resetTimer(30)}
 function resetTimer(n){clearInterval(S.int);S.int=null;S.sec=n;timer.textContent="00:"+String(n).padStart(2,"0");timerBtn.textContent="AVVIA";phase.textContent="READY"}
 function toggleTimer(){if(S.int){clearInterval(S.int);S.int=null;timerBtn.textContent="RIPRENDI";phase.textContent="PAUSA";return}phase.textContent="WORK";timerBtn.textContent="PAUSA";S.int=setInterval(()=>{S.sec--;timer.textContent="00:"+String(Math.max(0,S.sec)).padStart(2,"0");if(S.sec<=0){clearInterval(S.int);S.int=null;timerBtn.textContent="COMPLETATO";phase.textContent="DONE";complete()}},1000)}
 function complete(){localStorage.sessions=(+localStorage.sessions||0)+1;localStorage.minutes=(+localStorage.minutes||0)+(S.current?.t||0);updateStats();toast("Sessione registrata")}
